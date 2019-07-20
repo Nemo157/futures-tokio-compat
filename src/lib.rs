@@ -1,15 +1,22 @@
+use pin_project::unsafe_project;
+
 mod error;
-mod ext;
+mod io;
 mod spawn;
 
+#[unsafe_project]
+#[derive(Copy, Clone, Debug)]
 pub struct Compat<T> {
+    #[pin]
     inner: T,
+}
+
+impl<T> Compat<T> {
+    pub fn new(inner: T) -> Self {
+        Compat { inner }
+    }
 }
 
 pub(crate) trait LocalFrom<T> {
     fn from(t: T) -> Self;
-}
-
-mod prelude {
-    pub use crate::ext::{FuturesSpawnCompatExt as _, TokioExecutorCompatExt as _};
 }

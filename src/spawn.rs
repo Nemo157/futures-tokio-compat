@@ -17,6 +17,22 @@ where
     }
 }
 
+impl<T, Fut> tokio_executor::TypedExecutor<Fut> for Compat<T>
+where
+    T: futures_core::task::Spawn,
+    Fut: core::future::Future<Output = ()> + Send + 'static,
+{
+    fn spawn(&mut self, future: Fut) -> Result<(), tokio_executor::SpawnError> {
+        self.inner
+            .spawn_obj(Box::pin(future).into())
+            .map_err(LocalFrom::from)
+    }
+
+    fn status(&self) -> Result<(), tokio_executor::SpawnError> {
+        self.inner.status().map_err(LocalFrom::from)
+    }
+}
+
 impl<T> futures_core::task::Spawn for Compat<T>
 where
     T: tokio_executor::Executor,
