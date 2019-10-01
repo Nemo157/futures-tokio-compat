@@ -1,10 +1,10 @@
-use pin_project::unsafe_project;
+use pin_project::pin_project;
 
 mod error;
 mod io;
 mod spawn;
 
-#[unsafe_project]
+#[pin_project]
 #[derive(Copy, Clone, Debug)]
 pub struct Compat<T> {
     #[pin]
